@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- there is a cool way of doing this by initialising classes automatically,
+     but I've done far too much validation code to waste it. -->
+<Thing>
+  <Texture x="1" y="1">tutplatform1</Texture>
+  <Animation name="live" beginX="0" beginY="0" length="0" loop="false" time="0"></Animation>
+  
+  <Polygon name="default">
+    <Point x="0" y="0"></Point>
+    <Point x="631" y="0"></Point>
+    <Point x="631" y="68"></Point>
+    <Point x="0" y="68"></Point>
+  </Polygon>
+</Thing>

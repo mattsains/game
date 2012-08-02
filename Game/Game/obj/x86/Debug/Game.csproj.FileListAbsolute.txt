@@ -1,0 +1,10 @@
+C:\Documents and Settings\Matt\My Documents\Visual Studio 2010\Projects\Game\Game\Game\bin\x86\Debug\Content\tutplatform1.xnb
+C:\Documents and Settings\Matt\My Documents\Visual Studio 2010\Projects\Game\Game\Game\bin\x86\Debug\Content\SmallChar.xnb
+C:\Documents and Settings\Matt\My Documents\Visual Studio 2010\Projects\Game\Game\Game\bin\x86\Debug\Game.exe
+C:\Documents and Settings\Matt\My Documents\Visual Studio 2010\Projects\Game\Game\Game\bin\x86\Debug\Game.pdb
+C:\Documents and Settings\Matt\My Documents\Visual Studio 2010\Projects\Game\Game\Game\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Matt\My Documents\Visual Studio 2010\Projects\Game\Game\Game\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Documents and Settings\Matt\My Documents\Visual Studio 2010\Projects\Game\Game\Game\obj\x86\Debug\Game.exe
+C:\Documents and Settings\Matt\My Documents\Visual Studio 2010\Projects\Game\Game\Game\obj\x86\Debug\Game.pdb
+C:\Documents and Settings\Matt\My Documents\Visual Studio 2010\Projects\Game\Game\Game\bin\x86\Debug\Content\Arthur.xml
+C:\Documents and Settings\Matt\My Documents\Visual Studio 2010\Projects\Game\Game\Game\bin\x86\Debug\Content\testplat.xml
