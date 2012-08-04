@@ -1,4 +1,0 @@
-Content\tutplatform1.xnb
-Content\SmallChar.xnb
-Content\Arthur.xml
-Content\testplat.xml
