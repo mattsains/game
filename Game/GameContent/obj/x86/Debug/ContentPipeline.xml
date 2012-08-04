@@ -11,13 +11,13 @@
       <Time>2012-06-02T11:44:20.247875+02:00</Time>
     </Item>
     <Item>
-      <Source>SmallChar.png</Source>
-      <Name>SmallChar</Name>
+      <Source>Arthur.png</Source>
+      <Name>Arthur</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Documents and Settings\Matt\My Documents\Visual Studio 2010\Projects\Game\Game\Game\bin\x86\Debug\Content\SmallChar.xnb</Output>
-      <Time>2012-06-02T11:44:20.2635+02:00</Time>
+      <Output>C:\Documents and Settings\Matt\My Documents\Visual Studio 2010\Projects\Game\Game\Game\bin\x86\Debug\Content\Arthur.xnb</Output>
+      <Time>2012-08-04T19:04:18.25+02:00</Time>
     </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>

@@ -49,13 +49,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SmallChar.png">
-      <Name>SmallChar</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Arthur.xml">
       <Name>Arthur</Name>
       <Importer>XmlImporter</Importer>
@@ -63,6 +56,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
+    <Compile Include="Arthur.png">
+      <Name>Arthur</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Content Include="testplat.xml">
       <Name>testplat</Name>
       <Importer>XmlImporter</Importer>

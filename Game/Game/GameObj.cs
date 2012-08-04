@@ -41,7 +41,6 @@ namespace Game
     {
 
         public SpriteBatch spriteBatch;
-        public Algebra algebra = new Algebra();
         /// <summary>
         /// Instantiates a ThingHandler.
         /// A ThingHandler groups Things together for the purposes of collision detection and ease of Update()ing and Draw()ing
@@ -122,7 +121,7 @@ namespace Game
                         {
                             thPolyPos.Add(v + th.location);
                         }
-                        Tuple<Vector2,float> exitInfo = algebra.Intersects(tPolyPos, thPolyPos);//fine polygon collisions
+                        Tuple<Vector2,float> exitInfo = Algebra.Intersects(tPolyPos, thPolyPos);//fine polygon collisions
                         if (exitInfo.Item2!=0)
                         {
                             //probably something wrong here
@@ -169,7 +168,6 @@ namespace Game
     class Thing
     {
         protected XmlTextReader XMLAsset;
-        protected Algebra algebra= new Algebra();
         // STATIC PROPERTIES OF THING:
         private Texture2D Texture;
 
@@ -290,7 +288,7 @@ namespace Game
                                 polygonBB.Add(new Vector2(x, y));
                             }
                         }
-                        AABB = algebra.Span(polygonBB);
+                        AABB = Algebra.Span(polygonBB);
                     }
                 }
             }
@@ -362,11 +360,12 @@ namespace Game
                 else { throw new Exception("Invalid Animation parameters. See Thing::StartAnimation"); }
             }
         }
-        public void Draw(SpriteBatch Sprites)
+        public virtual void Draw(SpriteBatch Sprites)
         {
-
+            
             Rectangle SourceFrame = new Rectangle(frameCurrent * frameWidth, curAnim.beginY * frameHeight, frameWidth, frameHeight);
             Sprites.Draw(Texture, AABB, SourceFrame, Color.White);
+            
         }
 
         public void Move(Vector2 loc)
@@ -419,13 +418,14 @@ namespace Game
             Vector2 surface=new Vector2();
             byte d = 0;
             base.Update(things, SuppressMove);
-            foreach (Thing t in things.Intersectors(this, out surface))
+            List<Thing> intThings = things.Intersectors(this, out surface);
+            foreach (Thing t in intThings)
             {
                 d++;
                 SuppressMove = true;
-                velocity = algebra.project(velocity, surface);
+                velocity = Algebra.project(velocity, surface);
                 //TODO: Issue #22: adjust location so object bounces out of wall instead of sticking in it. The line below is wrong!
-                this.location -= algebra.Perp(surface);
+                this.location -= Algebra.Perp(surface);
             }
             if (d != 0) { Debug.Print(string.Format("collision with {0}", d)); }
             //Add player processing, clamping, etc here
