@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using System.Diagnostics;
 
 namespace Game
 {
@@ -27,84 +28,87 @@ namespace Game
     }
     class Algebra
     {
-        /// <summary>
-        /// Returns edge of intercept; dot difference 
-        /// </summary>
-        /// <param name="a">The first Polygon</param>
-        /// <param name="b">The Second Polygon</param>
-        /// <returns>surface edge iff polygons are intersecting, else (0,0)</returns>
-        public static Tuple<Vector2, float> Intersects(List<Vector2> a, List<Vector2> b)
+        public static void DrawLine(SpriteBatch s, Vector2 origin, Vector2 line, bool startBatch = false)
         {
-            List<Edge> edges = GetEdges(a);
-            Tuple<Edge, float> minInterval = new Tuple<Edge, float>(new Edge(new Vector2(), new Vector2()), float.MaxValue);
-            // checks each edge as a possible separating line. 
-            // If any regions of the polygons along a separating line does not overlap, the polygons cannot intersect, and the loop terminates
-            foreach (Edge e in edges)
-            {
-                float interval = ComponentIntersects(e, a, b);
-                if (interval == 0)
-                {
-                    return new Tuple<Vector2, float>(new Vector2(), 0);
-                }
-                else if (interval < minInterval.Item2)
-                {
-                    minInterval = new Tuple<Edge, float>(e, interval);
-                }
-            }
-            // all of the regions seem to intersect, so the polygons themselves must be intersecting
-            return new Tuple<Vector2, float>(minInterval.Item1.a - minInterval.Item1.b, minInterval.Item2);
+            //TODO: remove from actual game.
+            Texture2D pixel = new Texture2D(s.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+            pixel.SetData(new[] { Color.White });
+            // stretch the pixel between the two vectors
+
+            float angle = (float)Math.Atan2(line.Y, line.X);
+            float length = line.Length();
+
+
+            if (startBatch) { s.Begin(); }
+            s.Draw(pixel, origin, null, Color.White,
+                       angle, Vector2.Zero, new Vector2(length, 1),
+                       SpriteEffects.None, 0);
+
+            if (startBatch) { s.End(); }
+
         }
-        public static void DrawLine(SpriteBatch s, Vector2 origin, Vector2 line){
-                //TODO: remove from actual game.
-                Texture2D pixel = new Texture2D(s.GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
-                pixel.SetData(new[]{Color.White});
-                // stretch the pixel between the two vectors
+        /// <summary>
+        /// ought to return an escape vector
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static Vector2 Intersects(List<Vector2> a, List<Vector2> b)
+        {
+            float LeastDist = float.MaxValue;
+            Vector2 leastEdge=new Vector2();
+            float temp;
+            for (int n = 0; n < a.Count-1; n++)
+            {
                 
-                float angle = (float)Math.Atan2(line.Y, line.X);
-                float length = line.Length();
-
-                bool DNE = false;
-                try { s.Begin(); }
-                catch (Exception) { DNE = true; }
-                s.Draw(pixel, origin, null, Color.White,
-                           angle, Vector2.Zero, new Vector2(length, 1),
-                           SpriteEffects.None, 0);
-                if (!DNE)
+                if ((temp = flatten(a, b, Algebra.Perp(a[n] - a[n + 1]))) <= LeastDist && temp!=-1)
                 {
-                    s.End();
+                    LeastDist = temp;
+                    leastEdge = a[n] - a[n + 1];
                 }
             }
-        /// <summary>
-        /// Checks whether two convex polygons overlap with respect to a separating line e
-        /// </summary>
-        /// <param name="e">the seperating line</param>
-        /// <param name="a">first convex polygon</param>
-        /// <param name="b">second convex polygon</param>
-        /// <returns>If the polygons overlap along the separating axis, the amount that the two shapes overlap on the interval, else 0</returns>
-        private static float ComponentIntersects(Edge e, List<Vector2> a, List<Vector2> b)
-        {
-            // calculate the separating axis vector - 90^ to an edge
-            Vector2 axis = Perp(e.b - e.a);
+            if ((temp = flatten(a, b, Algebra.Perp(a[a.Count-1] - a[0]))) <= LeastDist && temp!=-1)
+            {
+                LeastDist = temp;
+                leastEdge = a[a.Count-1] - a[0];
+            }
 
-            List<float> acomp = new List<float>();
-            List<float> bcomp = new List<float>();
-            //Finds the intervals of all the dot products of each polygon.
-            // if these intervals overlap, then so do the polygons
-            foreach (Vector2 v in a)
+            if (LeastDist == float.MaxValue)//no intersect
+                return new Vector2();
+            else
             {
-                acomp.Add(Vector2.Dot(v, axis));
+                leastEdge.Normalize();
+                return leastEdge * LeastDist;
             }
-            foreach (Vector2 v in b)
+        }
+
+        public static float flatten(List<Vector2> a, List<Vector2> b, Vector2 axis)
+        {
+            float Amin = float.MaxValue;
+            float Amax=0;
+            float Bmin = float.MaxValue;
+            float Bmax=0;
+            //project along axis.
+            foreach (Vector2 va in a)
             {
-                bcomp.Add(Vector2.Dot(v, axis));
+                float l = Algebra.project(va, axis).LengthSquared();
+                if (l <= Amin) Amin = l;
+                if (l >= Amax) Amax = l;
             }
-            if (bcomp.Min() < acomp.Max() && acomp.Min() < bcomp.Max())
+            foreach (Vector2 vb in b)
             {
-                //regions overlap
-                return (new List<float>() { acomp.Max(), bcomp.Max() }.Min()) - 
-                    (new List<float>() { acomp.Min(), bcomp.Min() }.Max());
+                float l = Algebra.project(vb, axis).LengthSquared();
+                if (l <= Bmin) Bmin = l;
+                if (l >= Bmax) Bmax = l;
             }
-            else return 0;
+            if (Bmax < Amin || Bmin > Amax) { return -1; } //no intersection.
+
+            float Min, Max;
+            Min = Amin < Bmin ? Amin : Bmin;
+            Max = Amax > Bmax ? Amax : Bmax;
+            
+            return (float)(Math.Sqrt(Max) - Math.Sqrt(Min)); //return the length of intersection.
+
         }
         /// <summary>
         /// Turns a list of points into a list of edges

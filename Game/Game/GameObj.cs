@@ -92,6 +92,7 @@ namespace Game
             foreach (Thing t in this)
             {
                 t.Draw(spriteBatch);
+                Algebra.DrawLine(spriteBatch, new Vector2(t.AABB.Center.X, t.AABB.Center.Y), t.velocity);
             }
             spriteBatch.End();
         }
@@ -121,11 +122,11 @@ namespace Game
                         {
                             thPolyPos.Add(v + th.location);
                         }
-                        Tuple<Vector2,float> exitInfo = Algebra.Intersects(tPolyPos, thPolyPos);//fine polygon collisions
-                        if (exitInfo.Item2!=0)
+                        Vector2 exitVec = Algebra.Intersects(tPolyPos, thPolyPos);//fine polygon collisions
+                        if (exitVec.X!=0 && exitVec.Y!=0)
                         {
                             //probably something wrong here
-                            exit = (exitInfo.Item1/exitInfo.Item1.LengthSquared()) * exitInfo.Item2;
+                            exit += exitVec;
                             InterThings.Add(th);
                         }
                     }
@@ -307,7 +308,7 @@ namespace Game
 
             //I think this update routine is called not-as-quickly as draw, but still pretty damn fast
             double time = (double)DateTime.Now.Ticks / 1000000; //a million
-            double dT = time - lastTime;
+            double dT = 0.1/*time - lastTime*/;
             lastTime = time;
 
                 this.Move(new Vector2(this.location.X + (int)(velocity.X * dT), (this.location.Y + (int)(-velocity.Y * dT))));
@@ -371,7 +372,8 @@ namespace Game
         public void Move(Vector2 loc)
         {
             //for future's sake - Use this rather than Vector2 *.location
-            location = loc;            
+            location = loc;
+            AABB.Location = new Point((int)location.X,(int)location.Y);
         }
     }
 
@@ -415,19 +417,16 @@ namespace Game
             }
             SuppressMove = false;
             // bounce against intersectors
-            Vector2 surface=new Vector2();
-            byte d = 0;
+            Vector2 deflect;
+            List <Thing> intThings = things.Intersectors(this, out deflect);
             base.Update(things, SuppressMove);
-            List<Thing> intThings = things.Intersectors(this, out surface);
-            foreach (Thing t in intThings)
-            {
-                d++;
+
+            if (intThings.Count!=0){
                 SuppressMove = true;
-                velocity = Algebra.project(velocity, surface);
+               // velocity = Algebra.project(velocity, deflect);
                 //TODO: Issue #22: adjust location so object bounces out of wall instead of sticking in it. The line below is wrong!
-                this.location -= Algebra.Perp(surface);
+                this.location += deflect;
             }
-            if (d != 0) { Debug.Print(string.Format("collision with {0}", d)); }
             //Add player processing, clamping, etc here
 
         }

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Thing>
   <Texture x="8" y="1">Arthur</Texture>
-  <Gravity>-7</Gravity><!-- how fast the character falls to the earth-->
+  <Gravity>-1</Gravity><!-- how fast the character falls to the earth-->
   <Animation name="stand" beginX="0" beginY="0" length="1" loop="false" time="0"></Animation>
   <Animation name="walk" beginX="0" beginY="0" length="8" loop="true" time="50"></Animation>
   
